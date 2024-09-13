@@ -8,7 +8,9 @@ public class GolemController : MonoBehaviour
 	public float MoveSpeed;
 	[Range(0.0f, 0.3f)]
 	public float RotationSmoothTime = 0.12f;
-	
+	public float JumpHeight = 1.2f;
+	public float Gravity = -15.0f;
+
 	[Header("Animation")]
 	public AudioClip LandingAudioClip;
 	public AudioClip[] FootstepAudioClips;
@@ -16,7 +18,18 @@ public class GolemController : MonoBehaviour
 	
 	private bool _shouldMove;
 	private Vector3 _targetPosition;
-	
+	[SerializeField] private bool _isGrounded;
+	private float _groundedOffset = -0.14f;
+	private float _groundedRadius = 0.28f;
+	private LayerMask _groundLayers;
+	private float _jumpTimeoutDelta;
+	private float _fallTimeoutDelta;
+	private float _jumpTimeout = 0.5f;
+	private float _fallTimeout = 0.15f;
+	private float _verticalVelocity;
+
+
+
 	private Animator _animator;
 	private CharacterController _controller;
 
@@ -31,11 +44,16 @@ public class GolemController : MonoBehaviour
 		_shouldMove = false;
 		_targetPosition = transform.position;
 		_animator.SetFloat("MotionSpeed", 1);
+		_groundLayers = LayerMask.NameToLayer("Default");
+		_jumpTimeoutDelta = _jumpTimeout;
+		_fallTimeoutDelta = _fallTimeout;
 	}
 
 	private void Update()
 	{
-		if (Input.GetMouseButtonDown(0))
+		JumpAndGravity();
+		GroundedCheck();
+		if (Input.GetMouseButtonDown(1))
 		{
 			Vector3 mousePosition = Input.mousePosition;
 			Ray ray = Camera.main.ScreenPointToRay(mousePosition);
@@ -60,7 +78,6 @@ public class GolemController : MonoBehaviour
 			transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 			
 			// 골렘 이동
-			// transform.position = Vector3.MoveTowards(transform.position, _targetPosition, MoveSpeed * Time.deltaTime);
 			Vector3 targetDirection = Quaternion.Euler(0.0f, targetRotation, 0.0f) * Vector3.forward;
 			_controller.Move(targetDirection.normalized * (MoveSpeed * Time.deltaTime) +
 			                 new Vector3(0.0f, 0f, 0.0f) * Time.deltaTime);
@@ -71,8 +88,40 @@ public class GolemController : MonoBehaviour
 			}
 		}
 	}
-	
-	private void OnFootstep(AnimationEvent animationEvent)
+
+	private void GroundedCheck()
+	{
+		Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - _groundedOffset, transform.position.z);
+		_isGrounded = Physics.CheckSphere(spherePosition, _groundedRadius, _groundLayers, QueryTriggerInteraction.Ignore);
+		_animator.SetBool("Grounded", _isGrounded);
+	}
+
+	private void JumpAndGravity()
+	{
+		if (_isGrounded)
+        {
+			_fallTimeoutDelta = _fallTimeout;
+
+			_animator.SetBool("Jump", false);
+			_animator.SetBool("FreeFall", false);
+
+			if (_verticalVelocity < 0.0f)
+				_verticalVelocity = -2f;
+
+			if (Input.GetMouseButtonDown(0) && _jumpTimeoutDelta <= 0.0f)
+			{
+				_verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+				_animator.SetBool("Jump", true);
+			}
+
+			if (_jumpTimeoutDelta >= 0.0f)
+			{
+				_jumpTimeoutDelta -= Time.deltaTime;
+			}
+		}
+	}
+
+		private void OnFootstep(AnimationEvent animationEvent)
 	{
 		if (animationEvent.animatorClipInfo.weight > 0.5f)
 		{
