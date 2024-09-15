@@ -1,6 +1,8 @@
+using System;
 using StarterAssets;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 public class GolemController : MonoBehaviour
 {
@@ -27,6 +29,7 @@ public class GolemController : MonoBehaviour
 	private float _jumpTimeout = 0.5f;
 	private float _fallTimeout = 0.15f;
 	private float _verticalVelocity;
+	private float _terminalVelocity = 53.0f;
 
 
 
@@ -44,7 +47,7 @@ public class GolemController : MonoBehaviour
 		_shouldMove = false;
 		_targetPosition = transform.position;
 		_animator.SetFloat("MotionSpeed", 1);
-		_groundLayers = LayerMask.NameToLayer("Default");
+		_groundLayers = LayerMask.NameToLayer("TransparentFX");
 		_jumpTimeoutDelta = _jumpTimeout;
 		_fallTimeoutDelta = _fallTimeout;
 	}
@@ -67,6 +70,11 @@ public class GolemController : MonoBehaviour
 				_animator.SetFloat("Speed", 2);
 			}
 		}
+
+		if (_verticalVelocity != 0.0f)
+		{
+			_controller.Move(new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+		}
 		
 		if (_shouldMove)
 		{
@@ -79,8 +87,7 @@ public class GolemController : MonoBehaviour
 			
 			// 골렘 이동
 			Vector3 targetDirection = Quaternion.Euler(0.0f, targetRotation, 0.0f) * Vector3.forward;
-			_controller.Move(targetDirection.normalized * (MoveSpeed * Time.deltaTime) +
-			                 new Vector3(0.0f, 0f, 0.0f) * Time.deltaTime);
+			_controller.Move(targetDirection.normalized * (MoveSpeed * Time.deltaTime));
 			if (Vector3.Distance(transform.position, _targetPosition) < 0.1f)
 			{
 				_shouldMove = false;
@@ -117,6 +124,23 @@ public class GolemController : MonoBehaviour
 			if (_jumpTimeoutDelta >= 0.0f)
 			{
 				_jumpTimeoutDelta -= Time.deltaTime;
+			}
+		}
+		else
+		{
+			_jumpTimeoutDelta = _jumpTimeout;
+			
+			if (_fallTimeoutDelta >= 0.0f)
+			{
+				_fallTimeoutDelta -= Time.deltaTime;
+			}
+			else
+			{
+				_animator.SetBool("FreeFall", true);
+			}
+			if (_verticalVelocity < _terminalVelocity)
+			{
+				_verticalVelocity += Gravity * Time.deltaTime;
 			}
 		}
 	}
