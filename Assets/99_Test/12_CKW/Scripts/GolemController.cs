@@ -12,7 +12,8 @@ public class GolemController : MonoBehaviour
 	public float RotationSmoothTime = 0.12f;
 	public float JumpHeight = 1.2f;
 	public float Gravity = -15.0f;
-
+	public float SpeedChangeRate = 10.0f;
+	
 	[Header("Animation")]
 	public AudioClip LandingAudioClip;
 	public AudioClip[] FootstepAudioClips;
@@ -30,6 +31,7 @@ public class GolemController : MonoBehaviour
 	private float _fallTimeout = 0.15f;
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
+	private float _animationBlend;
 
 
 
@@ -66,8 +68,6 @@ public class GolemController : MonoBehaviour
 			{
 				_shouldMove = true;
 				_targetPosition = new Vector3(hit.point.x, hit.point.y, transform.position.z);
-				
-				_animator.SetFloat("Speed", 2);
 			}
 		}
 
@@ -91,9 +91,13 @@ public class GolemController : MonoBehaviour
 			if (Vector3.Distance(transform.position, _targetPosition) < 0.1f)
 			{
 				_shouldMove = false;
-				_animator.SetFloat("Speed", 0);
 			}
 		}
+		
+		float targetSpeed = _shouldMove ? MoveSpeed : 0;
+		_animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
+		if (_animationBlend < 0.01f) _animationBlend = 0f;
+		_animator.SetFloat("Speed", _animationBlend);
 	}
 
 	private void GroundedCheck()
@@ -145,7 +149,16 @@ public class GolemController : MonoBehaviour
 		}
 	}
 
-		private void OnFootstep(AnimationEvent animationEvent)
+	private void OnControllerColliderHit(ControllerColliderHit hit)
+	{
+		if (hit.collider.CompareTag("Obstacle"))
+		{
+			Debug.Log("Obstacle!");
+			_targetPosition = transform.position;
+		}
+	}
+
+	private void OnFootstep(AnimationEvent animationEvent)
 	{
 		if (animationEvent.animatorClipInfo.weight > 0.5f)
 		{

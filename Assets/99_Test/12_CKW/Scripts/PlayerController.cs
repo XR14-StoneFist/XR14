@@ -10,26 +10,26 @@ public class PlayerController : MonoBehaviour
     [SerializeField] [Range(0.5f, 1.0f)] private float lookUpValue = 0.5f;
     [SerializeField] [Range(0.0f, 0.5f)] private float lookDownValue = 0.5f;
 
-    private bool _isLookingUp;
-    private bool _isLookingDown;
+    public bool IsLookingUp;
+    public bool IsLookingDown;
 
     private CinemachineFramingTransposer _cft;
 
     private void Start()
     {
-        _isLookingUp = false;
-        _isLookingDown = false;
+        IsLookingUp = false;
+        IsLookingDown = false;
         _cft = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
 
     }
 
     void Update()
     {
-        _isLookingUp = Input.GetKey(KeyCode.W);
-        _isLookingDown = Input.GetKey(KeyCode.S);
-        if (_isLookingUp)
+        IsLookingUp = Input.GetKey(KeyCode.W);
+        IsLookingDown = Input.GetKey(KeyCode.S);
+        if (IsLookingUp)
             _cft.m_ScreenY = lookUpValue;
-        else if (_isLookingDown)
+        else if (IsLookingDown)
             _cft.m_ScreenY = lookDownValue;
         else
             _cft.m_ScreenY = 0.5f;
