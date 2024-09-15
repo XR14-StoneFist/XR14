@@ -8,11 +8,14 @@ public class GolemController : MonoBehaviour
 {
 	[Header("Player")]
 	public float MoveSpeed;
+	public float GrabSpeed;
 	[Range(0.0f, 0.3f)]
 	public float RotationSmoothTime = 0.12f;
 	public float JumpHeight = 1.2f;
 	public float Gravity = -15.0f;
 	public float SpeedChangeRate = 10.0f;
+	public float GrabRange = 0.5f;
+	public LayerMask[] GroundLayers;
 	
 	[Header("Animation")]
 	public AudioClip LandingAudioClip;
@@ -24,7 +27,6 @@ public class GolemController : MonoBehaviour
 	[SerializeField] private bool _isGrounded;
 	private float _groundedOffset = -0.14f;
 	private float _groundedRadius = 0.28f;
-	private LayerMask _groundLayers;
 	private float _jumpTimeoutDelta;
 	private float _fallTimeoutDelta;
 	private float _jumpTimeout = 0.5f;
@@ -32,6 +34,11 @@ public class GolemController : MonoBehaviour
 	private float _verticalVelocity;
 	private float _terminalVelocity = 53.0f;
 	private float _animationBlend;
+	private GameObject _clickedObject;
+	private GameObject _grabbedObject;
+	private bool _isGrabbing;
+	private float _sideThreshold = 0.5f;
+	private float _coordZ;
 
 
 
@@ -49,13 +56,25 @@ public class GolemController : MonoBehaviour
 		_shouldMove = false;
 		_targetPosition = transform.position;
 		_animator.SetFloat("MotionSpeed", 1);
-		_groundLayers = LayerMask.NameToLayer("TransparentFX");
 		_jumpTimeoutDelta = _jumpTimeout;
 		_fallTimeoutDelta = _fallTimeout;
+		_coordZ = transform.position.z;
 	}
 
 	private void Update()
 	{
+		if (Input.GetMouseButtonDown(0))
+		{
+			Vector3 mousePosition = Input.mousePosition;
+			Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+			RaycastHit hit;
+
+			if (Physics.Raycast(ray, out hit))
+			{
+				_clickedObject = hit.collider.gameObject;
+			}
+		}
+		
 		JumpAndGravity();
 		GroundedCheck();
 		if (Input.GetMouseButtonDown(1))
@@ -70,11 +89,36 @@ public class GolemController : MonoBehaviour
 				_targetPosition = new Vector3(hit.point.x, hit.point.y, transform.position.z);
 			}
 		}
+		
+		if (Input.GetMouseButtonDown(0))
+		{
+			if (_isGrabbing)
+			{
+				Debug.Log("Grab Off");
+				_targetPosition = transform.position;
+				_isGrabbing = false;
+				_grabbedObject.layer = LayerMask.NameToLayer("Default");
+				_grabbedObject = null;
+			}
+			else
+			{
+				if (CanGrab(_clickedObject))
+				{
+					Debug.Log("Grab On");
+					_isGrabbing = true;
+					_grabbedObject = _clickedObject;
+					_grabbedObject.layer = LayerMask.NameToLayer("Grabbed");
+				}
+			}
+		}
 
 		if (_verticalVelocity != 0.0f)
 		{
 			_controller.Move(new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
+
+		float targetSpeed = _isGrabbing ? GrabSpeed : MoveSpeed;
+		targetSpeed = _shouldMove ? targetSpeed : 0;
 		
 		if (_shouldMove)
 		{
@@ -87,23 +131,55 @@ public class GolemController : MonoBehaviour
 			
 			// 골렘 이동
 			Vector3 targetDirection = Quaternion.Euler(0.0f, targetRotation, 0.0f) * Vector3.forward;
-			_controller.Move(targetDirection.normalized * (MoveSpeed * Time.deltaTime));
-			if (Vector3.Distance(transform.position, _targetPosition) < 0.1f)
+			if (_isGrabbing)
 			{
-				_shouldMove = false;
+				float moveDistance = targetSpeed * Time.deltaTime;
+				Collider objectCollider = _grabbedObject.GetComponent<Collider>();
+				Vector3 rayStart = objectCollider.ClosestPoint(_targetPosition);
+				Vector3 rayDirection = targetDirection.normalized;
+				
+				RaycastHit hit;
+				if (Physics.Raycast(rayStart, rayDirection, out hit, moveDistance))
+				{
+					Debug.Log("DistanceToHit!");
+					float distanceToHit = hit.distance;
+					if (distanceToHit > 0.01f)
+					{
+						_controller.Move(rayDirection * distanceToHit);
+						_grabbedObject.transform.Translate(rayDirection * distanceToHit);
+					}
+					_shouldMove = false;
+				}
+				else
+				{
+					_controller.Move(rayDirection * moveDistance);
+					_grabbedObject.transform.Translate(rayDirection * moveDistance);
+				}
 			}
+			else
+			{
+				_controller.Move(targetDirection.normalized * (targetSpeed * Time.deltaTime));
+			}
+			if (Vector3.Distance(transform.position, _targetPosition) < 0.1f)
+				_shouldMove = false;
 		}
 		
-		float targetSpeed = _shouldMove ? MoveSpeed : 0;
 		_animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
 		if (_animationBlend < 0.01f) _animationBlend = 0f;
 		_animator.SetFloat("Speed", _animationBlend);
+
+		transform.position = new Vector3(transform.position.x, transform.position.y, _coordZ);
 	}
 
 	private void GroundedCheck()
 	{
 		Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - _groundedOffset, transform.position.z);
-		_isGrounded = Physics.CheckSphere(spherePosition, _groundedRadius, _groundLayers, QueryTriggerInteraction.Ignore);
+
+		int combinedLayer = 0;
+		foreach (int layer in GroundLayers)
+			combinedLayer += layer;
+		
+		_isGrounded = Physics.CheckSphere(spherePosition, _groundedRadius, combinedLayer, QueryTriggerInteraction.Ignore);
 		_animator.SetBool("Grounded", _isGrounded);
 	}
 
@@ -119,11 +195,18 @@ public class GolemController : MonoBehaviour
 			if (_verticalVelocity < 0.0f)
 				_verticalVelocity = -2f;
 
-			if (Input.GetMouseButtonDown(0) && _jumpTimeoutDelta <= 0.0f)
+			if (Input.GetMouseButtonDown(0))
 			{
-				_verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
-				_animator.SetBool("Jump", true);
+				if (CanGrab(_clickedObject) == false && _grabbedObject == null)
+				{
+					if (_jumpTimeoutDelta <= 0.0f)
+					{
+						_verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+						_animator.SetBool("Jump", true);
+					}
+				}
 			}
+			
 
 			if (_jumpTimeoutDelta >= 0.0f)
 			{
@@ -153,9 +236,32 @@ public class GolemController : MonoBehaviour
 	{
 		if (hit.collider.CompareTag("Obstacle"))
 		{
-			Debug.Log("Obstacle!");
-			_targetPosition = transform.position;
+			Vector3 hitNormal = hit.normal;
+			float dotProduct = Vector3.Dot(Vector3.up, hitNormal);
+			if (dotProduct > -_sideThreshold && dotProduct < _sideThreshold)
+			{
+				_targetPosition = transform.position;
+			}
 		}
+	}
+
+	private bool CanGrab(GameObject target)
+	{
+		if (target != null)
+		{
+			if (target.GetComponent<MovableObstacle>() != null)
+			{
+				Collider targetCollider = target.GetComponent<Collider>();
+				if (targetCollider != null)
+				{
+					Vector3 closestPoint = targetCollider.ClosestPoint(transform.position);
+					float distance = Vector3.Distance(transform.position, closestPoint);
+					if (distance <= GrabRange) return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private void OnFootstep(AnimationEvent animationEvent)

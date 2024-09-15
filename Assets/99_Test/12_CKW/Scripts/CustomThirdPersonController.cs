@@ -53,7 +53,7 @@ public class CustomThirdPersonController : MonoBehaviour
     public float GroundedRadius = 0.28f;
 
     [Tooltip("What layers the character uses as ground")]
-    public LayerMask GroundLayers;
+    public LayerMask[] GroundLayers;
 
     [Header("Cinemachine")]
     [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
@@ -179,7 +179,12 @@ public class CustomThirdPersonController : MonoBehaviour
         // set sphere position, with offset
         Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
             transform.position.z);
-        Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
+        int combinedLayer = 0;
+        foreach (int layer in GroundLayers)
+        {
+            combinedLayer += layer;
+        }
+        Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, combinedLayer,
             QueryTriggerInteraction.Ignore);
 
         // update animator if using character
