@@ -40,8 +40,6 @@ public class GolemController : MonoBehaviour
 	private float _sideThreshold = 0.5f;
 	private float _coordZ;
 
-
-
 	private Animator _animator;
 	private CharacterController _controller;
 
