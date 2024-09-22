@@ -71,6 +71,8 @@ public class CustomThirdPersonController : MonoBehaviour
     [Tooltip("For locking the camera position on all axis")]
     public bool LockCameraPosition = false;
 
+    public float CoyoteTime = 0.2f;
+
     // cinemachine
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -119,6 +121,8 @@ public class CustomThirdPersonController : MonoBehaviour
 #endif
         }
     }
+
+    private float coyoteTimeCounter;
 
 
     private void Awake()
@@ -288,6 +292,15 @@ public class CustomThirdPersonController : MonoBehaviour
     {
         if (Grounded)
         {
+            coyoteTimeCounter = CoyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+        
+        if (coyoteTimeCounter > 0f)
+        {
             // reset the fall timeout timer
             _fallTimeoutDelta = FallTimeout;
 
@@ -315,6 +328,8 @@ public class CustomThirdPersonController : MonoBehaviour
                 {
                     _animator.SetBool(_animIDJump, true);
                 }
+
+                coyoteTimeCounter = 0f;
             }
 
             // jump timeout
