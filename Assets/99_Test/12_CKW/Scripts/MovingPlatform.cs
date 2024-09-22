@@ -20,6 +20,7 @@ public class MovingPlatform : MonoBehaviour
     private void Start()
     {
         _origin = startPosition.transform.position;
+        Debug.Log(transform.position);
         _destination = endPosition.transform.position;
         _lerpPosition = 0;
         _isMovingForward = true;
@@ -64,7 +65,7 @@ public class MovingPlatform : MonoBehaviour
         else
         {
             _lerpPosition += speed * Time.deltaTime / _distance;
-            platform.transform.position = Vector2.Lerp(_origin, _destination, _lerpPosition);
+            platform.transform.position = Vector3.Lerp(_origin, _destination, _lerpPosition);
         }
         
     }
