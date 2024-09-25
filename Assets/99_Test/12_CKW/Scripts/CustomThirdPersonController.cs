@@ -42,6 +42,8 @@ public class CustomThirdPersonController : MonoBehaviour
     [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
     public float FallTimeout = 0.15f;
 
+    public float DoubleJumpTimeout = 0.50f;
+
     [Header("Player Grounded")]
     [Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
     public bool Grounded = true;
@@ -88,6 +90,7 @@ public class CustomThirdPersonController : MonoBehaviour
     // timeout deltatime
     private float _jumpTimeoutDelta;
     private float _fallTimeoutDelta;
+    private float _doubleJumpTimeoutDelta;
 
     // animation IDs
     private int _animIDSpeed;
@@ -123,7 +126,7 @@ public class CustomThirdPersonController : MonoBehaviour
     }
 
     private float coyoteTimeCounter;
-
+    private bool canDoubleJump = true;
 
     private void Awake()
     {
@@ -293,6 +296,7 @@ public class CustomThirdPersonController : MonoBehaviour
         if (Grounded)
         {
             coyoteTimeCounter = CoyoteTime;
+            canDoubleJump = true;
         }
         else
         {
@@ -303,6 +307,7 @@ public class CustomThirdPersonController : MonoBehaviour
         {
             // reset the fall timeout timer
             _fallTimeoutDelta = FallTimeout;
+            _doubleJumpTimeoutDelta = DoubleJumpTimeout;
 
             // update animator if using character
             if (_hasAnimator)
@@ -354,6 +359,26 @@ public class CustomThirdPersonController : MonoBehaviour
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDFreeFall, true);
+                }
+            }
+
+            if (_doubleJumpTimeoutDelta >= 0.0f)
+            {
+                _doubleJumpTimeoutDelta -= Time.deltaTime;
+            }
+            else
+            {
+                if (_input.jump && canDoubleJump)
+                {
+                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+                    // update animator if using character
+                    if (_hasAnimator)
+                    {
+                        _animator.SetBool(_animIDJump, true);
+                    }
+
+                    canDoubleJump = false;
                 }
             }
 
