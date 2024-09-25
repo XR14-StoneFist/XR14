@@ -1,5 +1,7 @@
+using System;
 using StarterAssets;
 using UnityEngine;
+using Random = UnityEngine.Random;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -125,8 +127,10 @@ public class CustomThirdPersonController : MonoBehaviour
         }
     }
 
-    private float coyoteTimeCounter;
-    private bool canDoubleJump = true;
+    private float _coyoteTimeCounter;
+    private bool _canDoubleJump = true;
+    public GameObject DashFlame { get; set; } = null;
+    private GameObject _dashArrowObject;
 
     private void Awake()
     {
@@ -164,6 +168,7 @@ public class CustomThirdPersonController : MonoBehaviour
 
         JumpAndGravity();
         GroundedCheck();
+        Dash();
         Move();
     }
 
@@ -295,15 +300,15 @@ public class CustomThirdPersonController : MonoBehaviour
     {
         if (Grounded)
         {
-            coyoteTimeCounter = CoyoteTime;
-            canDoubleJump = true;
+            _coyoteTimeCounter = CoyoteTime;
+            _canDoubleJump = true;
         }
         else
         {
-            coyoteTimeCounter -= Time.deltaTime;
+            _coyoteTimeCounter -= Time.deltaTime;
         }
         
-        if (coyoteTimeCounter > 0f)
+        if (_coyoteTimeCounter > 0f)
         {
             // reset the fall timeout timer
             _fallTimeoutDelta = FallTimeout;
@@ -334,7 +339,7 @@ public class CustomThirdPersonController : MonoBehaviour
                     _animator.SetBool(_animIDJump, true);
                 }
 
-                coyoteTimeCounter = 0f;
+                _coyoteTimeCounter = 0f;
             }
 
             // jump timeout
@@ -368,7 +373,7 @@ public class CustomThirdPersonController : MonoBehaviour
             }
             else
             {
-                if (_input.jump && canDoubleJump)
+                if (_input.jump && _canDoubleJump)
                 {
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
@@ -378,7 +383,7 @@ public class CustomThirdPersonController : MonoBehaviour
                         _animator.SetBool(_animIDJump, true);
                     }
 
-                    canDoubleJump = false;
+                    _canDoubleJump = false;
                 }
             }
 
@@ -390,6 +395,41 @@ public class CustomThirdPersonController : MonoBehaviour
         if (_verticalVelocity < _terminalVelocity)
         {
             _verticalVelocity += Gravity * Time.deltaTime;
+        }
+    }
+
+    private void Dash()
+    {
+        var mainCamera = Camera.main;
+        
+        if (DashFlame != null)
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                _dashArrowObject = UIManager.Instance.CreateDashArrow(DashFlame.transform.position);
+                Time.timeScale = 0f;
+            }
+            else if (Input.GetMouseButton(1))
+            {
+                Vector3 mousePositon = Input.mousePosition;
+                Vector3 objectPosition = DashFlame.transform.position;
+
+                mousePositon.z = objectPosition.z - mainCamera.transform.position.z;
+
+                Vector3 target = mainCamera.ScreenToWorldPoint(mousePositon);
+
+                float dy = target.y - objectPosition.y;
+                float dx = target.x - objectPosition.x;
+                float angle = Mathf.Atan2(dy, dx) * Mathf.Rad2Deg;
+                _dashArrowObject.transform.Rotate(new Vector3(0, 0, angle));
+            }
+            else if (Input.GetMouseButtonUp(1))
+            {
+                Destroy(_dashArrowObject);
+                Time.timeScale = 1f;
+                _controller.Move(Vector3.forward * (_speed * Time.deltaTime) +
+                                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+            }
         }
     }
 
