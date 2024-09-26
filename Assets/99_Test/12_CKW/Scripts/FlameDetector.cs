@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class FlameDetector : MonoBehaviour
 {
-	[SerializeField] private CustomThirdPersonController _controller;
+	[SerializeField] private JTH_PlayerMove _player;
 	
 	private void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag("Flame"))
 		{
-			if (_controller.DashFlame == null)
-				_controller.DashFlame = other.gameObject;
+			if (_player.DashFlame == null)
+				_player.DashFlame = other.gameObject;
 		}
 	}
 
@@ -19,8 +19,8 @@ public class FlameDetector : MonoBehaviour
 	{
 		if (other.CompareTag("Flame"))
 		{
-			if (_controller.DashFlame == other.gameObject)
-				_controller.DashFlame = null;
+			if (_player.DashFlame == other.gameObject)
+				_player.DashFlame = null;
 		}
 	}
 }

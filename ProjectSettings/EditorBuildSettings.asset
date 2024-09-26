@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/99_Test/12_CKW/RoundTable/Scene.unity
+    guid: 5d45d9811122d2b47a08902b47dc4d67
+  - enabled: 1
     path: Assets/99_Test/12_CKW/Scenes/Playground.unity
     guid: 08600aa179f2ef24c838a0c438fcb9cb
   m_configObjects:

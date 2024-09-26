@@ -12,27 +12,26 @@ public class JTH_PlayerMove : MonoBehaviour
     public float accelerationspeed;
     public float JumpPow;
 
-    [Header("¡°«¡∫Œ∫–")]
+    [Header("Ï†êÌîÑÎ∂ÄÎ∂Ñ")]
     public SubTriggerColider JumpBox;
     int JumpCount =2;
 
-    [Header("∫Æ ¡°«¡ ∫Œ∫–")]
+    [Header("Î≤Ω Ï†êÌîÑ Î∂ÄÎ∂Ñ")]
     public SubTriggerColider ClimeWall_Left;
     public SubTriggerColider ClimeWall_Right;
     public Vector2 WallDashPow;
     GrabWallState grabWallState = GrabWallState.None;
 
-    [Header("¥ÎΩ¨ ∫Œ∫–")]
+    [Header("ÎåÄÏâ¨ Î∂ÄÎ∂Ñ")]
     public SubTriggerColider DashPoint;
     public Vector2 DashPow;
+    public GameObject DashFlame;
     Vector2 MousePos;
-    bool DashAble =true;
+    private GameObject _dashArrowObject;
 
-    [Header("∏∂¬˚∫Œ∫–")]
+    [Header("ÎßàÏ∞∞Î∂ÄÎ∂Ñ")]
     public PhysicMaterial PlayerPhysicMaterial;
-
-
-    public float pow;
+    
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -71,79 +70,91 @@ public class JTH_PlayerMove : MonoBehaviour
                 PlayerPhysicMaterial.dynamicFriction = 0;
             }
         };
-
-        DashPoint.A_OnTriggerEnter += (Tag) => {
-            if (Tag == "DashPoint")
-                DashAble = true;
-        };
-        DashPoint.A_OnTriggerExit += (Tag) => {
-            if (Tag == "DashPoint")
-                DashAble = false;
-        };
     }
     void Update()
     {
         Move();
-        Desh();
+        Dash();
     }
 
     void Move()
     {
-        if (!(Input.GetKey(KeyCode.D) ^ Input.GetKey(KeyCode.A)))
-            velocityX = Mathf.Lerp(velocityX, 0, accelerationspeed * Time.deltaTime);
-        else
+        if (!rb.isKinematic)
         {
-            if (Input.GetKey(KeyCode.A))
-                velocityX = Mathf.Lerp(velocityX, -speed, accelerationspeed * Time.deltaTime);
-            if (Input.GetKey(KeyCode.D))
-                velocityX = Mathf.Lerp(velocityX, speed, accelerationspeed * Time.deltaTime);
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) && JumpCount-- > 0)
-        {
-            switch (grabWallState)
+            if (!(Input.GetKey(KeyCode.D) ^ Input.GetKey(KeyCode.A)))
+                velocityX = Mathf.Lerp(velocityX, 0, accelerationspeed * Time.deltaTime);
+            else
             {
-                case GrabWallState.None:
-                    rb.velocity = new Vector3(rb.velocity.x, JumpPow, rb.velocity.z);
-                    break;
-                case GrabWallState.Left:
-                    velocityX = WallDashPow.x;
-                    rb.velocity = new Vector3(rb.velocity.x, WallDashPow.y, rb.velocity.z);
-                    break;
-                case GrabWallState.Right:
-                    velocityX = -WallDashPow.x;
-                    rb.velocity = new Vector3(rb.velocity.x, WallDashPow.y, rb.velocity.z);
-                    break;
-                default:
-                    break;
-            }
-        }
+                if (Input.GetKey(KeyCode.A))
+                    velocityX = Mathf.Lerp(velocityX, -speed, accelerationspeed * Time.deltaTime);
+                if (Input.GetKey(KeyCode.D))
+                    velocityX = Mathf.Lerp(velocityX, speed, accelerationspeed * Time.deltaTime);
 
-        rb.velocity = new Vector3(velocityX, rb.velocity.y, rb.velocity.z);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) && JumpCount-- > 0)
+            {
+                switch (grabWallState)
+                {
+                    case GrabWallState.None:
+                        rb.velocity = new Vector3(rb.velocity.x, JumpPow, rb.velocity.z);
+                        break;
+                    case GrabWallState.Left:
+                        velocityX = WallDashPow.x;
+                        rb.velocity = new Vector3(rb.velocity.x, WallDashPow.y, rb.velocity.z);
+                        break;
+                    case GrabWallState.Right:
+                        velocityX = -WallDashPow.x;
+                        rb.velocity = new Vector3(rb.velocity.x, WallDashPow.y, rb.velocity.z);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            rb.velocity = new Vector3(velocityX, rb.velocity.y, rb.velocity.z);
+        }
     }
-    void Desh()
+    void Dash()
     {
-        if(DashAble)
+        if (DashFlame)
         {
             if (Input.GetMouseButtonDown(1))
             {
+                FreezeRigidbody();
                 MousePos =  new Vector2(Input.mousePosition.x , Input.mousePosition.y );
-
+                _dashArrowObject = UIManager.Instance.CreateDashArrow(DashFlame.transform.position);
             }
+
+            if (Input.GetMouseButton(1))
+            {
+                if (_dashArrowObject)
+                {
+                    Vector3 nowMousePositon = Input.mousePosition;
+                    Vector3 startMousePosition = MousePos;
+
+                    Vector3 direction = nowMousePositon - startMousePosition;
+
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    _dashArrowObject.transform.rotation = Quaternion.Euler(0, 0, angle);
+                }
+            }
+            
             if (Input.GetMouseButtonUp(1))
             {
+                ResumeRigidbody();
                 Vector2 NowMousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                Destroy(_dashArrowObject);
 
-                /*  æ≤¡ˆ æ ¥¬µ• ≥™¡ﬂø° æµ øπ¡§¿”. 
+                /*  Ïì∞ÏßÄ ÏïäÎäîÎç∞ ÎÇòÏ§ëÏóê Ïì∏ ÏòàÏ†ïÏûÑ. 
                  
                
-                (∞¢µµ∏¶ ±∏«œ¥¬∞Õ) 
+                (Í∞ÅÎèÑÎ•º Íµ¨ÌïòÎäîÍ≤É) 
                 float EulerAngle = Quaternion.FromToRotation(Vector3.up,
                 new Vector2(MousePos.x / Screen.width, MousePos.y / Screen.height) -
                 new Vector2(NowMousePos.x / Screen.width, NowMousePos.y / Screen.height)).eulerAngles.z;
 
-                (∞≈∏Æ ±∏«œ¥¬∞Õ) 
+                (Í±∞Î¶¨ Íµ¨ÌïòÎäîÍ≤É) 
                 float Pow = (Vector2.Distance(MousePos / Screen.height, NowMousePos / Screen.height));
 
                  */
@@ -164,5 +175,15 @@ public class JTH_PlayerMove : MonoBehaviour
 
             //DashAble = false;
         }
+    }
+    
+    void FreezeRigidbody()
+    {
+        rb.isKinematic = true;
+    }
+
+    void ResumeRigidbody()
+    {
+        rb.isKinematic = false;
     }
 }
