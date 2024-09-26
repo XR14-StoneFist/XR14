@@ -7,6 +7,9 @@ TagManager:
   - CinemachineTarget
   - Obstacle
   - Flame
+  - wall
+  - ground
+  - DashPoint
   layers:
   - Default
   - TransparentFX
