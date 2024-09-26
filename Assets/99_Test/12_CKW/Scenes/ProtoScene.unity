@@ -552,6 +552,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveSpeed: 2
   SprintSpeed: 7
+  DashSpeed: 30
   RotationSmoothTime: 0.12
   SpeedChangeRate: 3
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
@@ -576,6 +577,7 @@ MonoBehaviour:
   CameraAngleOverride: 0
   LockCameraPosition: 0
   CoyoteTime: 0.2
+  Test: {fileID: 2614240807022905884, guid: fb6584c7078dc104dbb7f6cfd83d8439, type: 3}
 --- !u!4 &255119621 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3893294197879345259, guid: 64dce48905ffd9b4293e595fa6941544,

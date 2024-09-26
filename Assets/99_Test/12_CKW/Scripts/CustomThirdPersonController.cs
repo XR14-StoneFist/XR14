@@ -19,6 +19,8 @@ public class CustomThirdPersonController : MonoBehaviour
     [Tooltip("Sprint speed of the character in m/s")]
     public float SprintSpeed = 5.335f;
 
+    public float DashSpeed = 30f;
+
     [Tooltip("How fast the character turns to face movement direction")]
     [Range(0.0f, 0.3f)]
     public float RotationSmoothTime = 0.12f;
@@ -131,6 +133,11 @@ public class CustomThirdPersonController : MonoBehaviour
     private bool _canDoubleJump = true;
     public GameObject DashFlame { get; set; } = null;
     private GameObject _dashArrowObject;
+    private Vector3 _dashDirection;
+    private float _dashSpeed;
+    private float _dashLerpPosition;
+
+    public GameObject Test;
 
     private void Awake()
     {
@@ -283,10 +290,11 @@ public class CustomThirdPersonController : MonoBehaviour
 
 
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
-
+        
         // move the player
         _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
-                         new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+                         new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime +
+                         _dashDirection * (_dashSpeed * Time.deltaTime));
 
         // update animator if using character
         if (_hasAnimator)
@@ -401,6 +409,16 @@ public class CustomThirdPersonController : MonoBehaviour
     private void Dash()
     {
         var mainCamera = Camera.main;
+
+        if (_dashLerpPosition > 1f)
+        {
+            _dashDirection = Vector3.zero;
+        }
+        else
+        {
+            _dashLerpPosition += Time.deltaTime;
+            _dashSpeed = Mathf.Lerp(DashSpeed, 0, EaseOutQuint(_dashLerpPosition));
+        }
         
         if (DashFlame != null)
         {
@@ -411,24 +429,30 @@ public class CustomThirdPersonController : MonoBehaviour
             }
             else if (Input.GetMouseButton(1))
             {
-                Vector3 mousePositon = Input.mousePosition;
-                Vector3 objectPosition = DashFlame.transform.position;
+                if (_dashArrowObject)
+                {
+                    Vector3 mousePositon = Input.mousePosition;
+                    Vector3 objectPosition = mainCamera.WorldToScreenPoint(DashFlame.transform.position);
 
-                mousePositon.z = objectPosition.z - mainCamera.transform.position.z;
+                    Vector3 direction = objectPosition - mousePositon;
 
-                Vector3 target = mainCamera.ScreenToWorldPoint(mousePositon);
-
-                float dy = target.y - objectPosition.y;
-                float dx = target.x - objectPosition.x;
-                float angle = Mathf.Atan2(dy, dx) * Mathf.Rad2Deg;
-                _dashArrowObject.transform.Rotate(new Vector3(0, 0, angle));
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    _dashArrowObject.transform.rotation = Quaternion.Euler(0, 0, angle);
+                }
             }
             else if (Input.GetMouseButtonUp(1))
             {
+                Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                Plane spawnPlane = new Plane(new Vector3(0, 0, -1), new Vector3(0, 0, DashFlame.transform.position.z));
+                float enter;
+                if (spawnPlane.Raycast(ray, out enter))
+                {
+                    Vector3 hitPoint = ray.GetPoint(enter);
+                    _dashDirection = (hitPoint - DashFlame.transform.position).normalized;
+                    _dashLerpPosition = 0f;
+                }
                 Destroy(_dashArrowObject);
                 Time.timeScale = 1f;
-                _controller.Move(Vector3.forward * (_speed * Time.deltaTime) +
-                                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
             }
         }
     }
@@ -472,5 +496,10 @@ public class CustomThirdPersonController : MonoBehaviour
         {
             AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
         }
+    }
+    
+    private float EaseOutQuint(float value)
+    {
+        return 1 - Mathf.Pow(1 - value, 5);
     }
 }
