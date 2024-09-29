@@ -13,17 +13,17 @@ public class JTH_PlayerMove : MonoBehaviour
     public float JumpPow;
 
     [Header("점프부분")]
-    public SubTriggerColider JumpBox;
+    public SubCollider JumpBox;
     int JumpCount =2;
 
     [Header("벽 점프 부분")]
-    public SubTriggerColider ClimeWall_Left;
-    public SubTriggerColider ClimeWall_Right;
+    public SubCollider ClimeWall_Left;
+    public SubCollider ClimeWall_Right;
     public Vector2 WallDashPow;
     GrabWallState grabWallState = GrabWallState.None;
 
     [Header("대쉬 부분")]
-    public SubTriggerColider DashPoint;
+    public SubCollider DashPoint;
     public Vector2 DashPow;
     public GameObject DashFlame;
     Vector2 MousePos;
@@ -36,18 +36,18 @@ public class JTH_PlayerMove : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        JumpBox.A_OnTriggerEnter += (Tag) => {
+        JumpBox.OnTriggerEnterAction += (Tag) => {
             if (Tag == "ground") JumpCount=2;
         };
 
-        ClimeWall_Left.A_OnTriggerEnter += (Tag) => {
+        ClimeWall_Left.OnTriggerEnterAction += (Tag) => {
             if (Tag == "wall") {
                 grabWallState = GrabWallState.Left;
                 PlayerPhysicMaterial.dynamicFriction = 300;
                 JumpCount = 1;
             }
         };
-        ClimeWall_Left.A_OnTriggerExit+= (Tag) => {
+        ClimeWall_Left.OnTriggerExitAction+= (Tag) => {
             if (Tag == "wall")
             {
                 grabWallState = GrabWallState.None;
@@ -55,7 +55,7 @@ public class JTH_PlayerMove : MonoBehaviour
             }
         };
 
-        ClimeWall_Right.A_OnTriggerEnter += (Tag) => {
+        ClimeWall_Right.OnTriggerEnterAction += (Tag) => {
             if (Tag == "wall")
             {
                 grabWallState = GrabWallState.Right;
@@ -63,7 +63,7 @@ public class JTH_PlayerMove : MonoBehaviour
                 JumpCount = 1;
             }
         };
-        ClimeWall_Right.A_OnTriggerExit += (Tag) => {
+        ClimeWall_Right.OnTriggerExitAction += (Tag) => {
             if (Tag == "wall")
             {
                 grabWallState = GrabWallState.None;
