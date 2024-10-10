@@ -11,14 +11,34 @@ public class PlayerStateFactory
 		_context = currentContext;
 	}
 
-	public PlayerBaseState Grounded()
+	public PlayerBaseState Idle()
 	{
-		return new PlayerGroundedState(_context, this);
+		return new PlayerIdleState(_context, this);
 	}
 
-	public PlayerBaseState Air()
+	public PlayerBaseState Run()
 	{
-		return new PlayerAirState(_context, this);
+		return new PlayerRunState(_context, this);
+	}
+	
+	public PlayerBaseState Jump()
+	{
+		return new PlayerJumpState(_context, this);
+	}
+
+	public PlayerBaseState DoubleJump()
+	{
+		return new PlayerDoubleJumpState(_context, this);
+	}
+
+	public PlayerBaseState Fall()
+	{
+		return new PlayerFallState(_context, this);
+	}
+
+	public PlayerBaseState Dash()
+	{
+		return new PlayerDashState(_context, this);
 	}
 	
 	public PlayerBaseState Hang()

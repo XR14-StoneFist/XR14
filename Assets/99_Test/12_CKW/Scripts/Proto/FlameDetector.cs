@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FlameDetector : MonoBehaviour
 {
-	[SerializeField] private JTH_PlayerMove _player;
+	[SerializeField] private PlayerStateMachine _player;
 	
 	private void OnTriggerEnter(Collider other)
 	{
