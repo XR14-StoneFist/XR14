@@ -34,5 +34,9 @@ public class PlayerIdleState : PlayerBaseState
 		{
 			SwitchState(_factory.Run());
 		}
+		else if (_context.IsGrounded == false)
+		{
+			SwitchState(_factory.Fall());
+		}
 	}
 }

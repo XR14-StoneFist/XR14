@@ -167,7 +167,7 @@ public class JTH_PlayerMove : MonoBehaviour
                 mov.y = Mathf.Clamp(mov.y, -1, 1);
 
                 velocityX = mov.x * DashPow.x;
-                rb.velocity = new Vector3(rb.velocity.x, mov .y* DashPow.y, rb.velocity.z);
+                rb.velocity = new Vector3(rb.velocity.x, mov.y* DashPow.y, rb.velocity.z);
             }
 
 

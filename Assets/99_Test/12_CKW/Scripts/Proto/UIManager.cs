@@ -36,6 +36,12 @@ public class UIManager : Singleton<UIManager>
 		return Instantiate(DashArrowPrefab, screenPosition, Quaternion.identity, MainCanvas.transform);
 	}
 
+	public void MoveDashArrow(GameObject dashArrowObject, Vector3 objectPosition)
+	{
+		Vector3 screenPosition = Camera.main.WorldToScreenPoint(objectPosition);
+		dashArrowObject.transform.position = screenPosition;
+	}
+
 	public void PrintPlayerState()
 	{
 		PlayerStateText.text = "Current State: " + PlayerStateMachine.CurrentState.GetType().Name;

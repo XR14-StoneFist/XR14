@@ -27,8 +27,16 @@ public class PlayerDoubleJumpState : PlayerBaseState
     public override void CheckSwitchStates()
     {
 	    if (_context.Rigidbody.velocity.y < 0)
+	    {
 		    SwitchState(_factory.Fall());
-	    if (_context.IsGrounded)
+	    }
+	    else if (_context.IsGrounded)
+	    {
 		    SwitchState(_factory.Idle());
+	    }
+	    else if (_context.hangWallState != HangWallState.None)
+	    {
+		    SwitchState(_factory.Hang());
+	    }
     }
 }

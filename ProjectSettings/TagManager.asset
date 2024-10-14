@@ -11,6 +11,7 @@ TagManager:
   - ground
   - DashPoint
   - Ground
+  - Wall
   layers:
   - Default
   - TransparentFX

@@ -9,7 +9,7 @@ public class PlayerFallState : PlayerBaseState
 
     public override void EnterState()
     {
-
+        
     }
 
     public override void UpdateState()
@@ -25,10 +25,20 @@ public class PlayerFallState : PlayerBaseState
     public override void CheckSwitchStates()
     {
         if (_context.IsGrounded)
+        {
             SwitchState(_factory.Idle());
+        }
         else if (Input.GetKeyDown(KeyBind.JumpKeyCode) && _context.CanDoubleJump)
         {
             SwitchState(_factory.DoubleJump());
+        }
+        else if (_context.hangWallState != HangWallState.None)
+        {
+            SwitchState(_factory.Hang());
+        }
+        else if (_context.DashFlame && Input.GetMouseButtonDown(1))
+        {
+            SwitchState(_factory.Hold());
         }
     }
 }

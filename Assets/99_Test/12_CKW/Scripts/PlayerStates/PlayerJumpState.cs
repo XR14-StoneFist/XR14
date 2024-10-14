@@ -32,5 +32,9 @@ public class PlayerJumpState : PlayerBaseState
         {
             SwitchState(_factory.DoubleJump());
         }
+        else if (_context.hangWallState != HangWallState.None)
+        {
+            SwitchState(_factory.Hang());
+        }
     }
 }

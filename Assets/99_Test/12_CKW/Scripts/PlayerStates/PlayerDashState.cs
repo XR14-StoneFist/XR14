@@ -9,21 +9,41 @@ public class PlayerDashState : PlayerBaseState
 
     public override void EnterState()
     {
-	    throw new System.NotImplementedException();
+	    Vector2 direction = (_context.StartMousePosition - _context.EndMousePosition).normalized;
+	    Vector3 value = _context.Rigidbody.velocity;
+	    value.x = direction.x * _context.DashPower;
+	    value.y = direction.y * _context.DashPower;
+	    _context.Rigidbody.velocity = value;
+	    _context.CanDoubleJump = true;
     }
 
     public override void UpdateState()
     {
-	    throw new System.NotImplementedException();
+	    CheckSwitchStates();
     }
 
     public override void ExitState()
     {
-	    throw new System.NotImplementedException();
+	    
     }
 
     public override void CheckSwitchStates()
     {
-	    throw new System.NotImplementedException();
+	    if (_context.IsGrounded)
+	    {
+		    SwitchState(_factory.Idle());
+	    }
+	    else if (_context.Rigidbody.velocity.y < 0)
+	    {
+		    SwitchState(_factory.Fall());
+	    }
+	    else if (Input.GetKeyDown(KeyBind.JumpKeyCode) && _context.CanDoubleJump)
+	    {
+		    SwitchState(_factory.DoubleJump());
+	    }
+	    else if (_context.hangWallState != HangWallState.None)
+	    {
+		    SwitchState(_factory.Hang());
+	    }
     }
 }

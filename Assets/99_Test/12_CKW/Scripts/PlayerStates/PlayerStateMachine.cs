@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum HangWallState { None, Left, Right }
 public class PlayerStateMachine : MonoBehaviour
 {
     [Header("점프")]
@@ -13,21 +14,33 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("이동")]
     public float MoveSpeed;
-
     public float AccelSpeed;
+
+    [Header("벽차기")]
+    public SubCollider ClimbWallLeft;
+    public SubCollider ClimbWallRight;
+    public PhysicMaterial PhysicMaterial;
+    public float WallJumpPower;
+
+    [Header("대시")]
+    public float DashPower;
     
     public Rigidbody Rigidbody { get; private set; }
     
     public bool IsGrounded { get; private set; }
+    public float VelocityX { get; set; }
     public bool CanJump { get; set; }
     public bool CanDoubleJump { get; set; }
     public float CoyoteTimeCounter { get; set; }
     public float DoubleJumpTimeoutDelta { get; set; }
+    public HangWallState hangWallState { get; set; }
     public GameObject DashFlame { get; set; }
+    public Vector2 StartMousePosition { get; set; }
+    public Vector2 EndMousePosition { get; set; }
+    public GameObject DashArrowObject { get; set; }
     
     private PlayerBaseState _currentState;
     private PlayerStateFactory _states;
-    private float _velocityX = 0f;
     
     public PlayerBaseState CurrentState
     {
@@ -53,6 +66,44 @@ public class PlayerStateMachine : MonoBehaviour
                 IsGrounded = false;
             }
         };
+
+        ClimbWallLeft.OnTriggerEnterAction += tagName =>
+        {
+            if (tagName == "Wall")
+            {
+                hangWallState = HangWallState.Left;
+                Rigidbody.useGravity = false;
+                Rigidbody.velocity = Vector3.zero;
+            }
+        };
+        
+        ClimbWallLeft.OnTriggerExitAction += tagName =>
+        {
+            if (tagName == "Wall")
+            {
+                hangWallState = HangWallState.None;
+                Rigidbody.useGravity = true;
+            }
+        };
+        
+        ClimbWallRight.OnTriggerEnterAction += tagName =>
+        {
+            if (tagName == "Wall")
+            {
+                hangWallState = HangWallState.Right;
+                Rigidbody.useGravity = false;
+                Rigidbody.velocity = Vector3.zero;
+            }
+        };
+        
+        ClimbWallRight.OnTriggerExitAction += tagName =>
+        {
+            if (tagName == "Wall")
+            {
+                hangWallState = HangWallState.None;
+                Rigidbody.useGravity = true;
+            }
+        };
         
         _states = new PlayerStateFactory(this);
         _currentState = _states.Idle();
@@ -67,21 +118,29 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void MoveHorizontal()
     {
-        if (!Input.GetKey(KeyBind.MoveLeftKeyCode) ^ Input.GetKey(KeyBind.MoveRightKeyCode))
+        if (!Rigidbody.isKinematic && _currentState.GetType().Name != "PlayerDashState")
         {
-            _velocityX = Mathf.Lerp(_velocityX, 0, AccelSpeed * Time.deltaTime);
-        }
-        else if (Input.GetKey(KeyBind.MoveLeftKeyCode))
-        {
-            _velocityX = Mathf.Lerp(_velocityX, -MoveSpeed, AccelSpeed * Time.deltaTime);
-        }
-        else if (Input.GetKey(KeyBind.MoveRightKeyCode))
-        {
-            _velocityX = Mathf.Lerp(_velocityX, MoveSpeed, AccelSpeed * Time.deltaTime);
-        }
+            if (!Input.GetKey(KeyBind.MoveLeftKeyCode) ^ Input.GetKey(KeyBind.MoveRightKeyCode))
+            {
+                VelocityX = Mathf.Lerp(VelocityX, 0, AccelSpeed * Time.deltaTime);
+            }
+            else if (Input.GetKey(KeyBind.MoveLeftKeyCode))
+            {
+                VelocityX = Mathf.Lerp(VelocityX, -MoveSpeed, AccelSpeed * Time.deltaTime);
+            }
+            else if (Input.GetKey(KeyBind.MoveRightKeyCode))
+            {
+                VelocityX = Mathf.Lerp(VelocityX, MoveSpeed, AccelSpeed * Time.deltaTime);
+            }
 
-        var velocity = Rigidbody.velocity;
-        velocity = new Vector3(_velocityX, velocity.y, velocity.z);
-        Rigidbody.velocity = velocity;
+            var velocity = Rigidbody.velocity;
+            velocity = new Vector3(VelocityX, velocity.y, velocity.z);
+            Rigidbody.velocity = velocity;
+        }
+    }
+    
+    public void DestroyDashArrowObject()
+    {
+        Destroy(DashArrowObject);
     }
 }
