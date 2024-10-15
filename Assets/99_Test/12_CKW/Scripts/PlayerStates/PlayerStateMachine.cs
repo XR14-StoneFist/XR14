@@ -54,7 +54,7 @@ public class PlayerStateMachine : MonoBehaviour
         Rigidbody = GetComponent<Rigidbody>();
         JumpBox.OnTriggerEnterAction += tagName =>
         {
-            if (tagName == "Ground")
+            if (tagName == "ground")
             {
                 IsGrounded = true;
             }
@@ -62,7 +62,7 @@ public class PlayerStateMachine : MonoBehaviour
 		
         JumpBox.OnTriggerExitAction += tagName =>
         {
-            if (tagName == "Ground")
+            if (tagName == "ground")
             {
                 IsGrounded = false;
             }
@@ -70,7 +70,7 @@ public class PlayerStateMachine : MonoBehaviour
 
         ClimbWallLeft.OnTriggerEnterAction += tagName =>
         {
-            if (tagName == "Wall")
+            if (tagName == "wall")
             {
                 hangWallState = HangWallState.Left;
                 Rigidbody.useGravity = false;
@@ -80,7 +80,7 @@ public class PlayerStateMachine : MonoBehaviour
         
         ClimbWallLeft.OnTriggerExitAction += tagName =>
         {
-            if (tagName == "Wall")
+            if (tagName == "wall")
             {
                 hangWallState = HangWallState.None;
                 Rigidbody.useGravity = true;
@@ -89,7 +89,7 @@ public class PlayerStateMachine : MonoBehaviour
         
         ClimbWallRight.OnTriggerEnterAction += tagName =>
         {
-            if (tagName == "Wall")
+            if (tagName == "wall")
             {
                 hangWallState = HangWallState.Right;
                 Rigidbody.useGravity = false;
@@ -99,7 +99,7 @@ public class PlayerStateMachine : MonoBehaviour
         
         ClimbWallRight.OnTriggerExitAction += tagName =>
         {
-            if (tagName == "Wall")
+            if (tagName == "wall")
             {
                 hangWallState = HangWallState.None;
                 Rigidbody.useGravity = true;
