@@ -8930,6 +8930,16 @@ PrefabInstance:
       propertyPath: DashPower
       value: 24
       objectReference: {fileID: 0}
+    - target: {fileID: 274546054810613466, guid: 2efeea88d425dc34b85137ab35b9c4e7,
+        type: 3}
+      propertyPath: DashDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1933627811687707520, guid: 2efeea88d425dc34b85137ab35b9c4e7,
+        type: 3}
+      propertyPath: m_Radius
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3356362011267382277, guid: 2efeea88d425dc34b85137ab35b9c4e7,
         type: 3}
       propertyPath: m_LocalPosition.x

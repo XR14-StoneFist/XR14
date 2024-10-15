@@ -24,6 +24,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("대시")]
     public float DashPower;
+    public float DashDuration;
     
     public Rigidbody Rigidbody { get; private set; }
     
@@ -142,5 +143,10 @@ public class PlayerStateMachine : MonoBehaviour
     public void DestroyDashArrowObject()
     {
         Destroy(DashArrowObject);
+    }
+    
+    public float EaseOutQuint(float value)
+    { 
+        return 1 - Mathf.Pow(1 - value, 5);
     }
 }

@@ -24,7 +24,7 @@ public class PlayerDashState : PlayerBaseState
 
     public override void ExitState()
     {
-	    
+	    _context.VelocityX = _context.Rigidbody.velocity.x;
     }
 
     public override void CheckSwitchStates()
