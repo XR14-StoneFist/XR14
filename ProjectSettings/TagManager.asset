@@ -3,18 +3,26 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - CinemachineTarget
+  - Obstacle
+  - Flame
+  - wall
+  - ground
+  - DashPoint
+  - Ground
+  - Wall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Grabbed
+  - Robot
+  - Flame
+  - FlameDetector
   - 
   - 
   - 
