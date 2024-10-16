@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 6427852198133167000}
   - component: {fileID: 702363849956697079}
   - component: {fileID: 4070517893493471953}
-  - component: {fileID: 6206440257168475311}
+  - component: {fileID: 5248949046708527359}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -194,7 +194,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1424021846497814013}
-  m_Material: {fileID: 13400000, guid: c39151418b1092e49a4c91db320e67aa, type: 2}
+  m_Material: {fileID: 13400000, guid: 5d974949bd1392d4b84b9d958b59b988, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -237,7 +237,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 88
   m_CollisionDetection: 0
---- !u!114 &6206440257168475311
+--- !u!114 &5248949046708527359
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -246,21 +246,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1424021846497814013}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c8183c219a11ea459cf375451bfbe71, type: 3}
+  m_Script: {fileID: 11500000, guid: f48797fa38145c643af09d295981e083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 8
-  accelerationspeed: 5
-  JumpPow: 20
   JumpBox: {fileID: 4415746679617062717}
-  ClimeWall_Left: {fileID: 8610102006546245619}
-  ClimeWall_Right: {fileID: 4440082546982629843}
-  WallDashPow: {x: 16, y: 20}
-  DashPoint: {fileID: 2807742330689504444}
-  DashPow: {x: 25, y: 20}
-  DashFlame: {fileID: 0}
-  PlayerPhysicMaterial: {fileID: 13400000, guid: c39151418b1092e49a4c91db320e67aa,
-    type: 2}
+  JumpPower: 20
+  CoyoteTime: 0
+  DoubleJumpTimeout: 0
+  MoveSpeed: 8
+  AccelSpeed: 10
+  ClimbWallLeft: {fileID: 8610102006546245619}
+  ClimbWallRight: {fileID: 4440082546982629843}
+  PhysicMaterial: {fileID: 13400000, guid: 5d974949bd1392d4b84b9d958b59b988, type: 2}
+  WallJumpPower: 20
+  DashPower: 24
+  DashDuration: 1
 --- !u!1 &2578098132714931058
 GameObject:
   m_ObjectHideFlags: 0
