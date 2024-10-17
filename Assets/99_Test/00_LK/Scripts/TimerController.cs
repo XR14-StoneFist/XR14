@@ -16,7 +16,6 @@ public class TimerController : MonoBehaviour
     {
         timeRemaining = timeLimit;
         timerText = GetComponent<TextMesh>(); // TextMesh 컴포넌트 가져오기
-        UpdateTimerText();
         
         StartTimer();
     }
@@ -38,7 +37,6 @@ public class TimerController : MonoBehaviour
                 GameOver();
             }
 
-            UpdateTimerText();
         }
     }
 
@@ -52,10 +50,6 @@ public class TimerController : MonoBehaviour
         isTiming = false;
     }
 
-    private void UpdateTimerText()
-    {
-        timerText.text = "남은 시간: " + Mathf.Ceil(timeRemaining) + "초";
-    }
 
     private void GameOver()
     {
