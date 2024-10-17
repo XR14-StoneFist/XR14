@@ -7165,8 +7165,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 336408776754074728, guid: a21d0c387a3953c428ec61e9ff1caa46,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1696576501}
   m_SourcePrefab: {fileID: 100100000, guid: a21d0c387a3953c428ec61e9ff1caa46, type: 3}
+--- !u!1 &1696576500 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 336408776754074728, guid: a21d0c387a3953c428ec61e9ff1caa46,
+    type: 3}
+  m_PrefabInstance: {fileID: 1696576499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1696576501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696576500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96de519b78c7f042aea3380d1e9dbd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 3592999195961101389}
+  ChaseMinValue: 0
+  ChaseMaxValue: 0
+  ChaseSpeed: 0
+  ChaseTime: 3
 --- !u!43 &1712317315
 Mesh:
   m_ObjectHideFlags: 0
@@ -8729,6 +8756,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2efeea88d425dc34b85137ab35b9c4e7, type: 3}
+--- !u!1 &3592999195961101389 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6097921900186690279, guid: 2efeea88d425dc34b85137ab35b9c4e7,
+    type: 3}
+  m_PrefabInstance: {fileID: 3592999195961101388}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6353435746208833557
 PrefabInstance:
   m_ObjectHideFlags: 0
