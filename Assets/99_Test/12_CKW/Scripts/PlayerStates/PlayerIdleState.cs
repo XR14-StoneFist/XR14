@@ -31,7 +31,7 @@ public class PlayerIdleState : PlayerBaseState
 		{
 			SwitchState(_factory.Jump());
 		}
-		else if (Input.GetKeyDown(KeyBind.MoveLeftKeyCode) || Input.GetKeyDown(KeyBind.MoveRightKeyCode))
+		else if (Input.GetKey(KeyBind.MoveLeftKeyCode) || Input.GetKey(KeyBind.MoveRightKeyCode))
 		{
 			SwitchState(_factory.Run());
 		}

@@ -9,7 +9,7 @@ public class PlayerRunState : PlayerBaseState
 	
 	public override void EnterState()
 	{
-		_context.Animator.SetTrigger("Run");
+		_context.Animator.SetBool("Run", true);
 		_context.RunEffect.Play();
 	}
 
@@ -20,6 +20,7 @@ public class PlayerRunState : PlayerBaseState
 
 	public override void ExitState()
 	{
+		_context.Animator.SetBool("Run", false);
 		_context.RunEffect.Stop();
 	}
 
