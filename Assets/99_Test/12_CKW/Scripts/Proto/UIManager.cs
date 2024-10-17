@@ -10,26 +10,55 @@ public class UIManager : Singleton<UIManager>
 {
 	public Canvas MainCanvas;
 	public GameObject DashArrowPrefab;
-	public Button RestartButton;
-	public TMP_Text PlayerStateText;
-	public PlayerStateMachine PlayerStateMachine;
 
+	[Header("StartUI")]
+	public GameObject StartUI;
+	public Button StartUI_GameStartButton;
+	public Button StartUI_SettingsButton;
+	public Button StartUI_ExitButton;
+
+	[Header("SettingsUI")]
+	public GameObject SettingsUI;
+
+	[Header("PlayUI")]
+	public GameObject PlayUI;
+	
+	[Header("GameOverUI")]
+	public GameObject GameOverUI;
+	public Button GameOverUI_RestartButton;
+	public Button GameOverUI_ExitButton;
+	
 	private void Start()
 	{
-		RestartButton.onClick.AddListener(OnClickRestartButton);
+		StartUI_GameStartButton.onClick.AddListener(OnClickGameStartButton);
+		StartUI_SettingsButton.onClick.AddListener(OnClickSettingsButton);
+		StartUI_ExitButton.onClick.AddListener(OnClickExitButton);
+		
+		GameOverUI_RestartButton.onClick.AddListener(OnClickRestartButton);
+		GameOverUI_ExitButton.onClick.AddListener(OnClickExitButton);
+
+		Time.timeScale = 0;
 	}
 
 	private void Update()
 	{
-		PrintPlayerState();
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			if (SettingsUI.activeSelf)
+			{
+				SettingsUI.SetActive(false);
+				StartUI.SetActive(true);
+			}
+		}
+
+		if (GameManager.Instance.Health <= 0)
+		{
+			Time.timeScale = 0;
+			PlayUI.SetActive(false);
+			GameOverUI.SetActive(true);
+		}
 	}
 
-	private void OnClickRestartButton()
-	{
-		Debug.Log("OnClickRestartButton");
-		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-	}
-	
 	public GameObject CreateDashArrow(Vector3 objectPosition)
 	{
 		Vector3 screenPosition = Camera.main.WorldToScreenPoint(objectPosition);
@@ -42,8 +71,26 @@ public class UIManager : Singleton<UIManager>
 		dashArrowObject.transform.position = screenPosition;
 	}
 
-	public void PrintPlayerState()
+	private void OnClickGameStartButton()
 	{
-		PlayerStateText.text = "Current State: " + PlayerStateMachine.CurrentState.GetType().Name;
+		Time.timeScale = 1;
+		PlayUI.SetActive(true);
+		StartUI.SetActive(false);
+	}
+
+	private void OnClickSettingsButton()
+	{
+		SettingsUI.SetActive(true);
+		StartUI.SetActive(false);
+	}
+
+	private void OnClickExitButton()
+	{
+		Application.Quit();
+	}
+
+	private void OnClickRestartButton()
+	{
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 }
