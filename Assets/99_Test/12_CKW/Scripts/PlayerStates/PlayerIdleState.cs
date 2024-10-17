@@ -12,6 +12,7 @@ public class PlayerIdleState : PlayerBaseState
 	{
 		_context.CanJump = true;
 		_context.CanDoubleJump = true;
+		_context.Animator.SetTrigger("Idle");
 	}
 
 	public override void UpdateState()

@@ -1,11 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public enum HangWallState { None, Left, Right }
 public class PlayerStateMachine : MonoBehaviour
 {
+    public Animator Animator;
+    public GameObject Character;
+    
     [Header("점프")]
     public SubCollider JumpBox;
     public float JumpPower;
@@ -17,6 +21,7 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("이동")]
     public float MoveSpeed;
     public float AccelSpeed;
+    public ParticleSystem RunEffect;
 
     [Header("벽차기")]
     public SubCollider ClimbWallLeft;
@@ -27,6 +32,8 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("대시")]
     public float DashPower;
     public float DashDuration;
+    public GameObject DashWrap;
+    public ParticleSystem DashEffect;
     
     public Rigidbody Rigidbody { get; private set; }
     
@@ -139,6 +146,15 @@ public class PlayerStateMachine : MonoBehaviour
             var velocity = Rigidbody.velocity;
             velocity = new Vector3(VelocityX, velocity.y, velocity.z);
             Rigidbody.velocity = velocity;
+
+            if (VelocityX > 0)
+            {
+                Character.transform.rotation = Quaternion.Euler(0, 90, 0);
+            }
+            else if (VelocityX < 0)
+            {
+                Character.transform.rotation = Quaternion.Euler(0, 270, 0);
+            }
         }
     }
     
