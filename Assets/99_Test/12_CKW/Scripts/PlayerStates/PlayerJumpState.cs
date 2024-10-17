@@ -13,6 +13,7 @@ public class PlayerJumpState : PlayerBaseState
         value.y = _context.JumpPower;
         _context.Rigidbody.velocity = value;
         _context.CanJump = false;
+        _context.JumpEffect.Play();
     }
 
     public override void UpdateState()

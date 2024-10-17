@@ -11,6 +11,8 @@ public class PlayerStateMachine : MonoBehaviour
     public float JumpPower;
     public float CoyoteTime;
     public float DoubleJumpTimeout;
+    public ParticleSystem JumpEffect;
+    public ParticleSystem DoubleJumpEffect;
 
     [Header("이동")]
     public float MoveSpeed;
