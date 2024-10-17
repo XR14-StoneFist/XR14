@@ -15,6 +15,8 @@ public class PlayerDashState : PlayerBaseState
 	    value.y = direction.y * _context.DashPower;
 	    _context.Rigidbody.velocity = value;
 	    _context.CanDoubleJump = true;
+	    _context.Animator.SetTrigger("Dash");
+	    _context.DashEffect.Play();
     }
 
     public override void UpdateState()

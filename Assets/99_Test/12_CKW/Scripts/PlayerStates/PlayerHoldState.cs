@@ -22,6 +22,7 @@ public class PlayerHoldState : PlayerBaseState
 		Vector3 direction = _context.EndMousePosition - _context.StartMousePosition;
 		float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 		_context.DashArrowObject.transform.rotation = Quaternion.Euler(0, 0, angle);
+		_context.DashWrap.transform.rotation = Quaternion.Euler(0, 0, angle + 180);
 	}
 
 	public override void ExitState()
