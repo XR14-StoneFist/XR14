@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5463114562671058406
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_polar_Pann_02
+  m_Shader: {fileID: -6465566751694194690, guid: 16b41b438dd8d8e468694872547ddca7,
+    type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _CA_Tex:
+        m_Texture: {fileID: 2800000, guid: 8a5b50901d825ca4e9393a6a90983ab4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Main_Tex:
+        m_Texture: {fileID: 2800000, guid: e1c50b82de4ee774aaf7c5d76d35f0c3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Sub_Tex:
+        m_Texture: {fileID: 2800000, guid: 8a5b50901d825ca4e9393a6a90983ab4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_c633d6d2d8ec4c87b8c57de6cac1d19e_Out_0_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 8a5b50901d825ca4e9393a6a90983ab4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _CA_Enable: 0
+    - _CA_Offset: 0.01
+    - _Dis_Scale: 146.6
+    - _Dis_pow: 0.1
+    - _Main_Pan_Speed_X: -0.2
+    - _Main_Pan_Speed_Y: 0.77
+    - _Main_Rotation: 30
+    - _Main_rot: 30
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _lerp: 0.5
+    - _sub_pow: 1
+    - _sub_str: 0.5
+    m_Colors:
+    - _Color: {r: 0, g: 1.2253159, b: 14.309434, a: 0}
+  m_BuildTextureStacks: []
